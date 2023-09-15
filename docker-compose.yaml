@@ -1,0 +1,40 @@
+version: "3.8"
+services:
+  registry:
+    image: registry:2
+    network_mode: bridge
+    ports:
+      - "5000:5000"
+    # depends_on:
+    #   - auth
+    # restart: always
+    environment:
+      # - REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/data
+      - REGISTRY_AUTH=token
+      - REGISTRY_AUTH_TOKEN_REALM=https://example.docker.com:5001/auth
+      - REGISTRY_AUTH_TOKEN_SERVICE="Docker registry"
+      - REGISTRY_AUTH_TOKEN_ISSUER="Auth Service"
+      - REGISTRY_HTTP_SECRET="123"
+      - REGISTRY_AUTH_TOKEN_ROOTCERTBUNDLE=/ssl/domain.crt
+      - REGISTRY_HTTP_TLS_CERTIFICATE=/ssl/domain.crt
+      - REGISTRY_HTTP_TLS_KEY=/ssl/domain.key
+    volumes:
+      - ./ssl:/ssl
+      - ./data:/data
+  auth:
+    image: cesanta/docker_auth:1.11
+    network_mode: bridge
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./:/config
+      - ./extensions:/extensions
+      # - ./ssl:/ssl
+    command: -alsologtostderr=true -log_dir=/logs /config/auth_config.yaml
+    restart: always
+networks:
+  outpost-infra:
+    name: outpost-infra
+  host:
+    name: host
+    external: true

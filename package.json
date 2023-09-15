@@ -1,0 +1,12 @@
+{
+  "name": "regsitry",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd extensions-go && go build extensions-go/authorization && mv authorization.exe ../extensions &&  go build extensions-go/authentication && mv authentication.exe ../extensions"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
